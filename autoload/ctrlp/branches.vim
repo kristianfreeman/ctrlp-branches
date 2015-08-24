@@ -42,10 +42,5 @@ function! ctrlp#branches#id()
 	return s:id
 endfunction
 
-" Create a command to directly call the new search type
-"
-" Put this in vimrc or plugin/branches.vim
-" command! CtrlPSample call ctrlp#init(ctrlp#branches#id())
-
 
 " vim:nofen:fdl=0:ts=2:sw=2:sts=2

@@ -20,9 +20,15 @@ call add(g:ctrlp_ext_vars, {
   \ 'lname': 'git branches',
   \ 'sname': 'branches',
   \ 'type': 'line',
+  \ 'exit': 'ctrlp#branches#exit()',
   \ })
 
 function! ctrlp#branches#init()
+  if !ctrlp#branches#is_git_repository()
+    let s:errmsg = 'Not a git repository (or any of the parent directories)'
+    return []
+  endif
+
   " Git branches without formatting
   let input = system("git for-each-ref --format='%(refname:short)' refs/heads/")
   let branches = split(input, '\n')
@@ -34,12 +40,30 @@ function! ctrlp#branches#accept(mode, str)
   call ctrlp#exit()
 endfunction
 
+function! ctrlp#branches#exit()
+  if !empty(s:errmsg) | call s:error(s:errmsg) | endif
+endfunction
+
 " Give the extension an ID
 let s:id = g:ctrlp_builtins + len(g:ctrlp_ext_vars)
+
+" Error message to show on exit if any
+let s:errmsg = ''
 
 " Allow it to be called later
 function! ctrlp#branches#id()
   return s:id
+endfunction
+
+function! ctrlp#branches#is_git_repository(...)
+  let path = a:0 > 0 ? a:1 : getcwd()
+  return finddir('.git', fnameescape(path)) != '' ? 1 : 0
+endfunction
+
+
+function! s:error(message)
+  echohl ErrorMsg | echomsg a:message | echohl NONE
+  let v:errmsg = a:message
 endfunction
 
 

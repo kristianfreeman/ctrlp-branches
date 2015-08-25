@@ -24,6 +24,9 @@ call add(g:ctrlp_ext_vars, {
   \ })
 
 function! ctrlp#branches#init()
+  " Explicitly remove error from previous session
+  let s:errmsg = ''
+
   if !ctrlp#branches#is_git_repository()
     let s:errmsg = 'Not a git repository (or any of the parent directories)'
     return []

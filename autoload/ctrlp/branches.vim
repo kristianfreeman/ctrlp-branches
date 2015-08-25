@@ -24,6 +24,9 @@ call add(g:ctrlp_ext_vars, {
   \ })
 
 function! ctrlp#branches#init()
+  " Explicitly remove error from previous session
+  let s:errmsg = ''
+
   if !ctrlp#branches#is_git_repository()
     let s:errmsg = 'Not a git repository (or any of the parent directories)'
     return []
@@ -36,7 +39,15 @@ function! ctrlp#branches#init()
 endfunction
 
 function! ctrlp#branches#accept(mode, str)
-  call system("git checkout " . a:str)
+  if ctrlp#branches#is_dirty_repository()
+    let s:errmsg = '
+          \ Please commit your changes or
+          \ stash them before you can switch branches'
+
+  else
+    call system("git checkout " . a:str)
+  endif
+
   call ctrlp#exit()
 endfunction
 
@@ -58,6 +69,11 @@ endfunction
 function! ctrlp#branches#is_git_repository(...)
   let path = a:0 > 0 ? a:1 : getcwd()
   return finddir('.git', fnameescape(path)) != '' ? 1 : 0
+endfunction
+
+function! ctrlp#branches#is_dirty_repository()
+  let dirty = system('git diff --shortstat')
+  return dirty == '' ? 0 : 1
 endfunction
 
 

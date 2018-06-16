@@ -24,7 +24,7 @@ Git branch search using [ctrlp.vim](https://github.com/kien/ctrlp.vim).
 Optionally, map `CtrlPBranches` to a key:
 
 ```vim
-nmap <C-g> :CtrlPBranches<br>
+nmap <C-g> :CtrlPBranches<CR>
 ```
 
 ## TROUBLESHOOTING
